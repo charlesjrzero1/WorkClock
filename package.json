@@ -1,0 +1,35 @@
+{
+  "name": "workclock",
+  "productName": "workclock",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "charles j",
+    "email": "charlesvieroliver@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.4.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "pdfmake": "^0.2.7"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.5",
+    "@electron-forge/maker-deb": "^6.0.5",
+    "@electron-forge/maker-rpm": "^6.0.5",
+    "@electron-forge/maker-squirrel": "^6.0.5",
+    "@electron-forge/maker-zip": "^6.0.5",
+    "electron": "23.1.1"
+  }
+}

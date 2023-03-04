@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <title>Folha de Ponto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma-rtl.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/canvas2image@1.0.5/canvas2image.min.js"></script>
+
+<!-- jsPDF addHTML plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+
+    <style>
+      
+      /* Estilo para a tabela */
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        
+      }
+
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+
+      th {
+        background-color: #dddddd;
+      }
+      #formulario{
+    width: 500px;
+    padding-left: 20px;
+    height: 450px}
+     
+    .subtitulo{
+      margin-left: 25px
+    }
+    #Titulo1{
+      margin-left: 600px;
+      
+    }
+    </style>
+  </head>
+  <body >
+    <div id="teste1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    <div id="gradient" ></div>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <p id="Logo" class="title">WorkClock</p>
+    
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+    </nav>
+    
+    <br>
+    
+    
+    <br>
+
+    <br>
+    <div class="columns">
+     <div class="column"> 
+      <div id="formulario">
+        <form class="">
+          <label class="subtitulo" for="Ticket"> <caption></caption>Ticket </label>
+          <input class="input is-rounded"  placeholder="Insira o numero do Ticket" type="text" id="Ticket" name="Ticket"><br><br>
+    
+          <label class="subtitulo" for="data"> Data</label>
+          <input class="input is-rounded"  type="date" id="data" name="data"><br><br>
+    
+          <label class="subtitulo" for="entrada"> Entrada:</label>
+          <input class="input is-rounded"  type="time" id="entrada" name="entrada"><br><br>
+    
+          <label class="subtitulo" for="saida"> Saída:</label>
+          <input class="input is-rounded"  type="time" id="saida" name="saida"><br><br>
+    
+          
+          <div class="select">
+            <select id="status"  >
+              <option>sobreaviso</option>
+              <option>Horas Extras </option>
+            </select>
+          </div>
+          <br>
+          <br>
+    
+          <button class="button is-primary" type="button" onclick="adicionarLinha()">Adicionar</button>
+        </form>
+      </div> 
+</div>
+     <div  class="column"> 
+       <button class="button is-primary" type="button" onclick="gerarXML()">Gerar arquivo XML</button>
+      <button type="button" class="button is-primary" onclick="createPDF();">Gerar arquivo PDF</button></div>
+
+    </div>
+
+   
+     
+    <div id="" class="container">
+	    <div id="customers">
+			<div class="bs-example container" data-example-id="striped-table">
+			 
+			   <div id="tabela1" class="container">
+    <table class="table"  id="renderPDF">
+      <tr class="is-primary">
+        <th>Data</th>
+        <th>Entrada</th>
+        <th>Saída</th>
+        <th>Atendimento</th>
+        <th>Sobreaviso</th>
+        <th>Status</th>
+        <th>Ticket</th>
+      </tr>
+    </table>
+ 
+  </div>
+			</div>
+	    </div>
+	</div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+      function adicionarLinha() {
+        // Obter os dados da entrada do usuário
+        const data = document.getElementById("data").value;
+        const entrada = document.getElementById("entrada").value;
+        const saida = document.getElementById("saida").value;
+        const status = document.getElementById("status").value;
+        const ticket = document.getElementById("Ticket").value;
+
+        // Calcular as horas trabalhadas e horas extras
+        const diff = (new Date(`1970-01-01 ${saida}`) - new Date(`1970-01-01 ${entrada}`)) / 1000 / 60 / 60; // Horas trabalhadas
+        const horasTrabalhadas = Math.min(8, diff); // Máximo de 8 horas por dia
+        const horasExtras = Math.max(0, diff - 8); // Horas extras
+
+        // Criar uma nova linha na tabela
+       // Criar uma nova linha na tabela
+       const tabela = document.getElementById("renderPDF");
+        const novaLinha = tabela.insertRow(-1);
+        const novaCelulaData = novaLinha.insertCell(0);
+        const novaCelulaEntrada = novaLinha.insertCell(1);
+        const novaCelulaSaida = novaLinha.insertCell(2);
+        const novaCelulaHorasTrabalhadas = novaLinha.insertCell(3);
+        const novaCelulaHorasExtras = novaLinha.insertCell(4);
+        const novaCelulaStatus = novaLinha.insertCell(5);
+        const novaCelulaTickets = novaLinha.insertCell(6)
+
+
+        
+
+       let statusid = document.getElementById("status").value;
+      
+       if (statusid== 'sobreaviso' ){
+        // Preencher a nova linha com os dados
+        novaCelulaData.innerHTML = data;
+        novaCelulaEntrada.innerHTML = entrada;
+        novaCelulaSaida.innerHTML = saida;
+        
+        novaCelulaHorasExtras.innerHTML = horasTrabalhadas;
+        novaCelulaStatus.innerHTML = status;
+        novaCelulaTickets.innerHTML = ticket ;
+      };
+       if (statusid== 'Horas Extras' ){ 
+        novaCelulaData.innerHTML = data;
+        novaCelulaEntrada.innerHTML = entrada;
+        novaCelulaSaida.innerHTML = saida;
+        novaCelulaHorasTrabalhadas.innerHTML = horasTrabalhadas;
+        
+        novaCelulaStatus.innerHTML = status;
+        novaCelulaTickets.innerHTML = ticket ;
+      }
+
+        }
+    
+
+
+
+      
+     </script>
+      <script>
+        function gerarXML() {
+          const tabela = document.getElementById("renderPDF");
+          const linhas = tabela.getElementsByTagName("tr");
+          let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<dados>\n';
+          for (let i = 1; i < linhas.length; i++) {
+            const colunas = linhas[i].getElementsByTagName("td");
+            xml += '  <linha>\n';
+            for (let j = 0; j < colunas.length; j++) {
+              xml += '    <' + tabela.rows[0].cells[j].textContent.toLowerCase() + '>';
+              xml += colunas[j].textContent;
+              xml += '</' + tabela.rows[0].cells[j].textContent.toLowerCase() + '>\n';
+            }
+            xml += '  </linha>\n';
+          }
+          xml += '</dados>';
+          const blob = new Blob([xml], { type: "text/xml;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "dados.xml";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      </script>
+      
+      
+
+<script>
+
+  (function($){
+      $.fn.createPdf = function(parametros) {
+          
+          var config = {              
+              'fileName':'html-to-pdf'
+          };
+          
+          if (parametros){
+              $.extend(config, parametros);
+          }                            
+  
+          var quotes = document.getElementById($(this).attr('id'));
+  
+          html2canvas(quotes, {
+              onrendered: function(canvas) {
+                  var pdf = new jsPDF('p', 'pt', 'letter');
+  
+                  for (var i = 0; i <= quotes.clientHeight/980; i++) {
+                      var srcImg  = canvas;
+                      var sX      = 0;
+                      var sY      = 980*i;
+                      var sWidth  = 3000;
+                      var sHeight = 980;
+                      var dX      = 0;
+                      var dY      = 0;
+                      var dWidth  = 3000;
+                      var dHeight = 980;
+  
+                      window.onePageCanvas = document.createElement("canvas");
+                      onePageCanvas.setAttribute('width', 1000);
+                      onePageCanvas.setAttribute('height', 980);
+                      var ctx = onePageCanvas.getContext('2d');
+                      ctx.drawImage(srcImg,sX,sY,sWidth,sHeight,dX,dY,dWidth,dHeight);
+  
+                      var canvasDataURL = onePageCanvas.toDataURL("image/png", 1.0);
+                      var width         = onePageCanvas.width;
+                      var height        = onePageCanvas.clientHeight;
+  
+                      if (i > 0) {
+                          pdf.addPage(612, 791);
+                      }
+  
+                      pdf.setPage(i+1);
+                      pdf.addImage(canvasDataURL, 'PNG', 20, 40, (width*.40), (height*.62));
+                  }
+  
+                  pdf.save(config.fileName);
+              }
+          });
+      };
+  })(jQuery);
+   
+  
+  function createPDF() {
+      $('#renderPDF').createPdf({
+          'fileName' : 'testePDF'
+      });
+  }
+    </script>
+    </div>
+  </body>
+  
+</html>
